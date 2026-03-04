@@ -109,12 +109,139 @@ Label:
 """.strip()
 
 
+# ── Problem 3: Sensitivity variants (baseline = few-shot, then perturbations) ──
+
+# Baseline: same as FEW_SHOT_TEMPLATE (original order: Neg, Pos, Pos, Neg, Pos)
+SENSITIVITY_BASELINE = FEW_SHOT_TEMPLATE
+
+# Reorder: put Positive examples first, then Negative (Pos, Pos, Pos, Neg, Neg)
+SENSITIVITY_REORDER = """
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's true overall intent.
+Classify the review as exactly one word: Positive or Negative.
+
+Examples:
+
+Review: "I was skeptical after the bad reviews but honestly this thing exceeded every expectation I had."
+Label: Positive
+
+Review: "It's not pretty and the instructions were useless, but once it's set up it runs like a dream."
+Label: Positive
+
+Review: "I bought three more for my family — that should tell you everything."
+Label: Positive
+
+Review: "Oh great, another charger that works for exactly one month. Money well spent."
+Label: Negative
+
+Review: "Sure, it looks nice on the shelf. Too bad it doesn't actually do what it's supposed to."
+Label: Negative
+
+Now classify:
+Review: "{review}"
+Label:
+""".strip()
+
+# Rephrase: shorter instruction line (no "exactly one word")
+SENSITIVITY_REPHRASE = """
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm or irony; focus on the reviewer's true intent.
+Classify the sentiment as Positive or Negative.
+
+Examples:
+
+Review: "Oh great, another charger that works for exactly one month. Money well spent."
+Label: Negative
+
+Review: "I was skeptical after the bad reviews but honestly this thing exceeded every expectation I had."
+Label: Positive
+
+Review: "It's not pretty and the instructions were useless, but once it's set up it runs like a dream."
+Label: Positive
+
+Review: "Sure, it looks nice on the shelf. Too bad it doesn't actually do what it's supposed to."
+Label: Negative
+
+Review: "I bought three more for my family — that should tell you everything."
+Label: Positive
+
+Now classify:
+Review: "{review}"
+Label:
+""".strip()
+
+# Add constraint: explicit "do not explain"
+SENSITIVITY_ADD_CONSTRAINT = """
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's true overall intent.
+Classify the review as exactly one word: Positive or Negative.
+Do not explain; output only the label.
+
+Examples:
+
+Review: "Oh great, another charger that works for exactly one month. Money well spent."
+Label: Negative
+
+Review: "I was skeptical after the bad reviews but honestly this thing exceeded every expectation I had."
+Label: Positive
+
+Review: "It's not pretty and the instructions were useless, but once it's set up it runs like a dream."
+Label: Positive
+
+Review: "Sure, it looks nice on the shelf. Too bad it doesn't actually do what it's supposed to."
+Label: Negative
+
+Review: "I bought three more for my family — that should tell you everything."
+Label: Positive
+
+Now classify:
+Review: "{review}"
+Label:
+""".strip()
+
+# Remove constraint: drop "exactly one word"
+SENSITIVITY_REMOVE_CONSTRAINT = """
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's true overall intent.
+Classify the review as Positive or Negative.
+
+Examples:
+
+Review: "Oh great, another charger that works for exactly one month. Money well spent."
+Label: Negative
+
+Review: "I was skeptical after the bad reviews but honestly this thing exceeded every expectation I had."
+Label: Positive
+
+Review: "It's not pretty and the instructions were useless, but once it's set up it runs like a dream."
+Label: Positive
+
+Review: "Sure, it looks nice on the shelf. Too bad it doesn't actually do what it's supposed to."
+Label: Negative
+
+Review: "I bought three more for my family — that should tell you everything."
+Label: Positive
+
+Now classify:
+Review: "{review}"
+Label:
+""".strip()
+
+SENSITIVITY_VARIANTS: Dict[str, str] = {
+    "baseline": SENSITIVITY_BASELINE,
+    "reorder": SENSITIVITY_REORDER,
+    "rephrase": SENSITIVITY_REPHRASE,
+    "add_constraint": SENSITIVITY_ADD_CONSTRAINT,
+    "remove_constraint": SENSITIVITY_REMOVE_CONSTRAINT,
+}
+
+
 class IncontextLearning_Templates:
     def __init__(self) -> None:
         self.zero_shot_template = ZERO_SHOT_TEMPLATE
         self.one_shot_template = ONE_SHOT_TEMPLATE
         self.few_shot_template = FEW_SHOT_TEMPLATE
-    
+
     def get_prompt(self, strategy: str, review: str) -> str:
         if strategy == "few":
             return self.few_shot_template.format(review=review)
@@ -123,10 +250,13 @@ class IncontextLearning_Templates:
         if strategy == "zero":
             return self.zero_shot_template.format(review=review)
         raise ValueError(f"Unknown strategy: {strategy}")
-    
-  
 
-    
+    def get_sensitivity_prompt(self, variant: str, review: str) -> str:
+        """Get prompt for Problem 3 sensitivity (baseline or perturbed)."""
+        if variant not in SENSITIVITY_VARIANTS:
+            raise ValueError(f"Unknown sensitivity variant: {variant}")
+        return SENSITIVITY_VARIANTS[variant].format(review=review)
+
 
 
 
