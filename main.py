@@ -4,7 +4,7 @@ from pathlib import Path
 from datasets import load_dataset
 from typing import Dict, Tuple, List
 from config import config
-from src.incontext_learning import IncontextLearning_Templates, REVIEWS
+from src.incontext_learning import IncontextLearning_Templates, REVIEWS, SENSITIVITY_VARIANTS
 from src.models import OpenAIModel, GeminiModel, AnthropicModel
 from src.cot import PROBLEMS, ChainOfThoughtTemplates
 from src.evaluator import Evaluator
@@ -150,6 +150,79 @@ def incontext_learning(num_examples: int = 10) -> None:
             writer.writeheader()
             writer.writerows(summary_rows)
 
+
+def run_prompt_sensitivity(num_examples: int = 10) -> None:
+    """Problem 3: Run baseline (few-shot) and perturbed prompts on same 10 reviews, two models."""
+    iclt = IncontextLearning_Templates()
+    samples = REVIEWS[:num_examples]
+    variants = list(SENSITIVITY_VARIANTS.keys())
+
+    gemini_model = GeminiModel()
+    anthropic_model = AnthropicModel()
+    models = {
+        "gemini_2.5_flash": gemini_model,
+        "anthropic_haiku_4.5": anthropic_model,
+    }
+
+    results: Dict[Tuple[str, str], Dict[str, str]] = {}
+    for model_name in models:
+        for variant in variants:
+            results[(model_name, variant)] = {}
+
+    detailed_rows: List[Dict[str, str]] = []
+
+    print("\n=== Problem 3: Prompt sensitivity (few-shot baseline + perturbations) ===")
+    for idx, sample in enumerate(samples):
+        text = sample["review"]
+        gold = sample["label"].lower()
+        for model_name, model in models.items():
+            for variant in variants:
+                prompt = iclt.get_sensitivity_prompt(variant, text)
+                raw_output = model.generate(prompt)
+                pred = extract_label(raw_output)
+                key = f"example_{idx}"
+                results[(model_name, variant)][key] = pred
+                detailed_rows.append({
+                    "example_id": key,
+                    "review": text,
+                    "gold_label": gold,
+                    "model": model_name,
+                    "variant": variant,
+                    "prediction": pred,
+                    "raw_output": raw_output,
+                })
+                print(f"  {model_name} | {variant} | ex{idx} -> {pred}")
+
+    print("\n=== Accuracy summary (Problem 3) ===")
+    summary_rows: List[Dict[str, str]] = []
+    for model_name in models:
+        for variant in variants:
+            preds = results[(model_name, variant)]
+            correct = sum(1 for i, s in enumerate(samples) if preds.get(f"example_{i}", "") == s["label"].lower())
+            acc = correct / len(samples)
+            summary_rows.append({
+                "model": model_name,
+                "variant": variant,
+                "correct": str(correct),
+                "total": str(len(samples)),
+                "accuracy": f"{acc:.4f}",
+            })
+            print(f"{model_name} | {variant}: {correct}/{len(samples)} correct, accuracy = {acc:.2f}")
+
+    results_dir = Path("results")
+    results_dir.mkdir(parents=True, exist_ok=True)
+    if detailed_rows:
+        with (results_dir / "problem3_predictions.csv").open("w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=["example_id", "review", "gold_label", "model", "variant", "prediction", "raw_output"])
+            w.writeheader()
+            w.writerows(detailed_rows)
+    if summary_rows:
+        with (results_dir / "problem3_summary.csv").open("w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=["model", "variant", "correct", "total", "accuracy"])
+            w.writeheader()
+            w.writerows(summary_rows)
+
+
 def normalize_numeric_answer(text: str) -> str:
     if not text:
         return ""
@@ -285,7 +358,7 @@ def chain_of_thought_prompting() -> None:
 
 
 if __name__ == "__main__":
-    # Run Problem 1 (in-context learning) and Problem 2 (CoT) as needed.
-    incontext_learning()
-    chain_of_thought_prompting()
+    # incontext_learning()
+    # chain_of_thought_prompting()
+    run_prompt_sensitivity()
 
