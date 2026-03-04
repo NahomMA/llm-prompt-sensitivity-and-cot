@@ -1,0 +1,70 @@
+\\documentclass[11pt]{article}
+
+\\usepackage[margin=1in]{geometry}
+\\usepackage{graphicx}
+\\usepackage{booktabs}
+\\usepackage{amsmath}
+
+\\title{CS 795/895 -- Homework 2\\\\Prompting Strategies and Model Behavior}
+\\author{<Your Name>}
+\\date{<Date>}
+
+\\begin{document}
+
+\\maketitle
+
+\\section{Problem 1: In-Context Learning for Sentiment Classification}
+
+\\subsection{Experimental Setup}
+Describe the task (binary sentiment on short product reviews), the two models used (GPT-4.1 and Gemini Flash), and the three prompting strategies (zero-shot, one-shot, few-shot). Mention that you used 10 hand-crafted reviews with sarcasm and mixed sentiment.
+
+\\subsection{Prompts}
+Briefly show or summarize the zero-shot, one-shot, and few-shot prompts you used. Highlight how the examples were chosen to cover both positive and negative sentiment and some sarcastic cases.
+
+\\subsection{Results}
+Summarize the accuracies from \\texttt{results/problem1\_summary.csv} in a small table, e.g. model $\\times$ prompting strategy. Optionally include qualitative examples from \\texttt{results/problem1\_predictions.csv} where different strategies disagreed.
+
+
+\\begin{table}[h]
+  \\centering
+  \\begin{tabular}{lccc}
+    \\toprule
+    Model & Zero-shot & One-shot & Few-shot \\\\
+    \\midrule
+    GPT-4.1 &  &  &  \\\\
+    Gemini Flash &  &  &  \\\\
+    \\bottomrule
+  \\end{tabular}
+  \\caption{Accuracy of different prompting strategies on sentiment classification.}
+\\end{table}
+
+\\subsection{Discussion}
+Discuss the main differences you observed between prompting strategies (e.g., whether few-shot helped more for sarcastic reviews, whether one model benefited more from in-context examples than the other).
+
+\\section{Problem 2: Direct Answer vs Chain-of-Thought}
+
+\\subsection{Dataset and Prompts}
+Describe the arithmetic word problems you created (10 problems, numeric answers). Explain the direct-answer prompt (only final number) and the chain-of-thought prompt (step-by-step reasoning then final number).
+
+\\subsection{Results}
+Summarize accuracies and other metrics from \\texttt{results/problem2\_summary.csv}. You can also add a figure comparing accuracy of direct vs. chain-of-thought for each model.
+
+% Example figure include:
+% \\begin{figure}[h]
+%   \\centering
+%   \\includegraphics[width=0.6\\textwidth]{../results/problem2_accuracy.png}
+%   \\caption{Direct vs chain-of-thought accuracy for each model.}
+% \\end{figure}
+
+\\subsection{Analysis}
+Explain when chain-of-thought improved accuracy, when it did not, and any patterns across problem difficulty or multi-step reasoning.
+
+\\section{Problem 3: Prompt Sensitivity}
+
+Describe which strong-performing prompt from Problems 1 or 2 you chose, what controlled perturbations you applied (e.g., reordering examples, changing phrasing, adding/removing constraints), and how two models' outputs changed. Summarize robustness patterns and which perturbations mattered most.
+
+\\section{Problem 4: Connection to Course Project}
+
+Identify which prompting strategies you plan to use in your course project, why they are useful for your goals, what aspects of the system they help evaluate or improve, and any challenges you anticipate. Also mention any strategies you do not plan to use and why.
+
+\\end{document}

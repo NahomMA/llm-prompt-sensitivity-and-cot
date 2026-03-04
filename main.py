@@ -1,3 +1,7 @@
+import os
+import csv
+from pathlib import Path
+
 from datasets import load_dataset
 from typing import Dict, Tuple, List
 from config import config
@@ -62,6 +66,9 @@ def incontext_learning(num_examples: int = 10) -> None:
         for strategy in strategies:
             results[(model_name, strategy)] = {}
 
+    # store detailed predictions for saving
+    detailed_rows: List[Dict[str, str]] = []
+
     for idx, sample in enumerate(samples):
         text = sample["review"]
         gold = sample["label"].lower()
@@ -75,13 +82,26 @@ def incontext_learning(num_examples: int = 10) -> None:
                 prompt = iclt.get_prompt(strategy, text)
                 raw_output = model.generate(prompt)
                 pred = extract_label(raw_output)
-                results[(model_name, strategy)][f"example_{idx}"] = pred
+                key = f"example_{idx}"
+                results[(model_name, strategy)][key] = pred
+                detailed_rows.append(
+                    {
+                        "example_id": key,
+                        "review": text,
+                        "gold_label": gold,
+                        "model": model_name,
+                        "strategy": strategy,
+                        "prediction": pred,
+                        "raw_output": raw_output,
+                    }
+                )
                 print(
                     f"{model_name} | {strategy}-shot -> pred: {pred} "
                     f"(raw: {raw_output!r})"
                 )
 
     print("\n=== Accuracy summary (Problem 1) ===")
+    summary_rows: List[Dict[str, str]] = []
     for model_name in models:
         for strategy in strategies:
             preds = results[(model_name, strategy)]
@@ -96,6 +116,48 @@ def incontext_learning(num_examples: int = 10) -> None:
                 f"{model_name} | {strategy}-shot: "
                 f"{correct}/{len(samples)} correct, accuracy = {acc:.2f}"
             )
+            summary_rows.append(
+                {
+                    "model": model_name,
+                    "strategy": strategy,
+                    "correct": str(correct),
+                    "total": str(len(samples)),
+                    "accuracy": f"{acc:.4f}",
+                }
+            )
+
+    # save results to CSV files under results/
+    results_dir = Path("results")
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    detailed_path = results_dir / "problem1_predictions.csv"
+    summary_path = results_dir / "problem1_summary.csv"
+
+    if detailed_rows:
+        with detailed_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "example_id",
+                    "review",
+                    "gold_label",
+                    "model",
+                    "strategy",
+                    "prediction",
+                    "raw_output",
+                ],
+            )
+            writer.writeheader()
+            writer.writerows(detailed_rows)
+
+    if summary_rows:
+        with summary_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=["model", "strategy", "correct", "total", "accuracy"],
+            )
+            writer.writeheader()
+            writer.writerows(summary_rows)
 
 def normalize_numeric_answer(text: str) -> str:
     if not text:
@@ -133,6 +195,8 @@ def chain_of_thought_prompting() -> None:
     }
 
     print("\n=== Problem 2: Chain-of-thought vs direct-answer ===")
+    # for saving detailed outputs
+    detailed_rows: List[Dict[str, str]] = []
     for idx, problem in enumerate(PROBLEMS):
         question = problem["question"]
         actual_answer = problem["answer"]
@@ -147,12 +211,24 @@ def chain_of_thought_prompting() -> None:
                 output = model.generate(prompt)
                 pred = normalize_numeric_answer(output)
                 predictions[model_name][style].append(pred)
+                detailed_rows.append(
+                    {
+                        "problem_id": str(idx),
+                        "question": question,
+                        "gold_answer": actual_answer,
+                        "model": model_name,
+                        "style": style,
+                        "prediction": pred,
+                        "raw_output": output,
+                    }
+                )
                 print(
                     f"{model_name} | {style} -> pred: {pred!r} "
                     f"(raw: {output[:200]!r}...)"
                 )
 
     print("\n=== Accuracy summary (Problem 2) ===")
+    summary_rows: List[Dict[str, str]] = []
     for model_name in models:
         for style in styles:
             preds = predictions[model_name][style]
@@ -164,6 +240,56 @@ def chain_of_thought_prompting() -> None:
             print(f"F1 (macro): {f1:.2f}")
             print("Confusion matrix:")
             print(cm)
+            summary_rows.append(
+                {
+                    "model": model_name,
+                    "style": style,
+                    "accuracy": f"{acc:.4f}",
+                    "precision_macro": f"{prec:.4f}",
+                    "recall_macro": f"{rec:.4f}",
+                    "f1_macro": f"{f1:.4f}",
+                }
+            )
+
+    # save Problem 2 results
+    results_dir = Path("results")
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    detailed_path = results_dir / "problem2_predictions.csv"
+    summary_path = results_dir / "problem2_summary.csv"
+
+    if detailed_rows:
+        with detailed_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "problem_id",
+                    "question",
+                    "gold_answer",
+                    "model",
+                    "style",
+                    "prediction",
+                    "raw_output",
+                ],
+            )
+            writer.writeheader()
+            writer.writerows(detailed_rows)
+
+    if summary_rows:
+        with summary_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "model",
+                    "style",
+                    "accuracy",
+                    "precision_macro",
+                    "recall_macro",
+                    "f1_macro",
+                ],
+            )
+            writer.writeheader()
+            writer.writerows(summary_rows)
 
 
 if __name__ == "__main__":
