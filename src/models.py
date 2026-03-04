@@ -4,8 +4,11 @@ import os
 from typing import Dict, Tuple
 from config import config
 import google.generativeai as genai
+from anthropic import Anthropic
+
 
 load_dotenv()
+
 
 class OpenAIModel:
     def __init__(self) -> None:
@@ -25,6 +28,26 @@ class OpenAIModel:
             messages=[{"role": "user", "content": prompt}],
         )
         return completion.choices[0].message.content.strip()
+
+
+class AnthropicModel:
+    def __init__(self, model_name: str = config["anthropic_model"]) -> None:
+        api_key = os.getenv(config["anthropic_api_key"])
+        if not api_key:
+            raise RuntimeError("ANTHROPIC_API_KEY is not set in the environment.")
+        self.client = Anthropic(api_key=api_key)
+        self.model = model_name
+        self.temperature = config["temperature"]
+        self.max_tokens = config["max_tokens"]
+
+    def generate(self, prompt: str) -> str:
+        response = self.client.messages.create(
+            model=self.model,
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.content[0].text
 
 
 class GeminiModel:

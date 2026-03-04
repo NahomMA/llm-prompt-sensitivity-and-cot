@@ -1,0 +1,142 @@
+% Appendix: prompt templates and evaluation items
+
+\subsection*{Appendix A: Sentiment Classification Prompt Templates}
+\label{app:sentiment-prompts}
+
+\paragraph{Zero-shot template.}
+\begin{verbatim}
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's
+true overall intent, not surface-level word choice.
+Classify the review as exactly one word: Positive or Negative.
+
+Review: "{review}"
+
+Label:
+\end{verbatim}
+
+\paragraph{One-shot template.}
+\begin{verbatim}
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's
+true overall intent.
+Classify the review as exactly one word: Positive or Negative.
+
+Example:
+Review: "Congratulations to the manufacturer for making something that breaks
+in record time. Truly an achievement."
+Label: Negative
+
+Now classify:
+Review: "{review}"
+Label:
+\end{verbatim}
+
+\paragraph{Few-shot template.}
+\begin{verbatim}
+You are a sentiment classifier for product reviews.
+Some reviews use sarcasm, irony, or mixed language. Focus on the reviewer's
+true overall intent.
+Classify the review as exactly one word: Positive or Negative.
+
+Examples:
+
+Review: "Oh great, another charger that works for exactly one month.
+Money well spent."
+Label: Negative
+
+Review: "I was skeptical after the bad reviews but honestly this thing
+exceeded every expectation I had."
+Label: Positive
+
+Review: "It's not pretty and the instructions were useless, but once it's
+set up it runs like a dream."
+Label: Positive
+
+Review: "Sure, it looks nice on the shelf. Too bad it doesn't actually do
+what it's supposed to."
+Label: Negative
+
+Review: "I bought three more for my family — that should tell you everything."
+Label: Positive
+
+Now classify:
+Review: "{review}"
+Label:
+\end{verbatim}
+
+\newpage
+\subsection*{Appendix B: Chain-of-Thought Prompt Templates}
+\label{app:cot-prompts}
+
+\paragraph{Direct-answer template.}
+\begin{verbatim}
+You are solving a short arithmetic word problem.
+Read the problem carefully and provide only the final numeric answer.
+Do not show your reasoning.
+
+Problem: {question}
+
+Answer (just the number):
+\end{verbatim}
+
+\paragraph{Chain-of-thought template.}
+\begin{verbatim}
+You are solving a short arithmetic word problem.
+First, think through the problem step by step.
+Then, on the last line, provide only the final numeric answer.
+
+Problem: {question}
+
+Let's reason step by step, then give the final answer.
+\end{verbatim}
+
+\newpage
+\subsection*{Appendix C: Sentiment Evaluation Set}
+\label{app:sentiment-data}
+
+The ten hand-crafted product reviews used in Problem~1, with gold labels:
+\begin{enumerate}
+  \item ``After the update it became the most expensive paperweight in my house.'' (Negative)
+  \item ``The replacement works perfectly.'' (Negative)
+  \item ``Thanks to this thing I haven't slept properly in a week. I just can't put it down.'' (Positive)
+  \item ``It finally convinced me to switch to the competitor.'' (Negative)
+  \item ``It didn't catch fire. Exceeds expectations for this brand.'' (Negative)
+  \item ``I left a one-star review six months ago. I was wrong.'' (Positive)
+  \item ``This ruined every other speaker I own. Nothing else sounds acceptable anymore.'' (Positive)
+  \item ``Fantastic product if you don't mind the smell of burning plastic every time you turn it on.'' (Negative)
+  \item ``I've been giving these away to everyone I know. Perfect gift for people I don't particularly like.'' (Negative)
+  \item ``Bought this four years ago. Still here. Still works. Nothing else to say.'' (Positive)
+\end{enumerate}
+
+\newpage
+\subsection*{Appendix D: Arithmetic Problems for Chain-of-Thought Evaluation}
+\label{app:cot-data}
+
+The arithmetic word problems used in Problem~2, with correct numeric answers:
+\begin{enumerate}
+  \item A store sells notebooks for \$4 each. If you buy 3 or more, you get a 25\% discount on the entire purchase. How much do 5 notebooks cost? (Answer: 15)
+  \item A train travels at 60 mph for 2.5 hours, then at 40 mph for 1.5 hours. What is the total distance traveled in miles? (Answer: 210)
+  \item Tom is twice as old as Jerry. In 5 years, Tom will be 35. How old is Jerry now? (Answer: 15)
+  \item A recipe calls for $\tfrac{2}{3}$ cup of sugar for 4 servings. How many cups of sugar do you need for 18 servings? (Answer: 3)
+  \item A pool fills at 12 gallons per minute and drains at 4 gallons per minute simultaneously. How many minutes does it take to accumulate 120 gallons? (Answer: 15)
+  \item Three friends split an \$84 dinner bill. They add a 20\% tip before splitting. How much does each person pay in dollars? (Answer: 33.6)
+  \item A shirt originally costs \$60. It is marked down 30\%, then an additional 10\% off the sale price. What is the final price? (Answer: 37.8)
+  \item You have 100 feet of fencing to make a rectangular garden. If the length is 10 feet more than the width, what is the area in square feet? (Answer: 600)
+  \item A car uses 3 gallons of gas every 90 miles. Gas costs \$4 per gallon. How much does gas cost for a 450-mile trip? (Answer: 60)
+  \item A baker makes 48 cupcakes. She sells one third on Monday, then half of what remains on Tuesday. How many are left? (Answer: 16)
+  \item Two runners start from the same point running in opposite directions. One runs 7 mph and the other 5 mph. After how many hours are they 36 miles apart? (Answer: 3)
+  \item A company's profit was \$200{,}000 last year. It grew 15\% this year but they paid 40\% in taxes on this year's profit. What is the after-tax profit this year? (Answer: 138000)
+\end{enumerate}
+
+\newpage
+\subsection*{Appendix E: Prompt Variants for Sensitivity Analysis}
+\label{app:sensitivity}
+
+For Problem~3 (prompt sensitivity), we perturbed one of the best-performing prompts from Problems~1--2 (e.g., the few-shot sentiment prompt) by:
+\begin{itemize}
+  \item Reordering the in-context examples.
+  \item Rephrasing the task description (more formal vs. more conversational).
+  \item Adding or removing an explicit constraint on output format.
+\end{itemize}
+The exact text of these variants follows the same structure as the base templates in Appendices~A and~B and can be reconstructed from the descriptions in the main report.

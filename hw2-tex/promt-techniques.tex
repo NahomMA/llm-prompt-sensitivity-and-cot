@@ -1,0 +1,32 @@
+\documentclass[letter,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{code/}}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs} 
+
+
+\begin{document}
+
+\input{sections/cover}
+\newpage
+\section*{In-Context Learning}
+\input{sections/icl}
+\section*{Chain-of-Thought}
+\input{sections/cot}
+\section*{Prompt Sensitivity}
+\input{sections/promtsensitivity}
+\section*{Connection to Course Project}
+\input{sections/ccrsproj}
+\section*{Conclusion}
+\input{sections/conclusion}
+\newpage
+\input{sections/appendix}
+\newpage
+\bibliographystyle{plain}
+\bibliography{sections/ref}
+\end{document}

@@ -1,12 +1,11 @@
 import os
 import csv
 from pathlib import Path
-
 from datasets import load_dataset
 from typing import Dict, Tuple, List
 from config import config
 from src.incontext_learning import IncontextLearning_Templates, REVIEWS
-from src.classifier import OpenAIModel, GeminiModel
+from src.models import OpenAIModel, GeminiModel, AnthropicModel
 from src.cot import PROBLEMS, ChainOfThoughtTemplates
 from src.evaluator import Evaluator
 
@@ -15,13 +14,11 @@ NEG_LABEL = "negative"
 
 
 def extract_label(text: str) -> str:
-    """Extract 'positive' or 'negative' from a model response."""
     if not text:
         return "unknown"
 
     text_lower = text.strip().lower()
 
-    # If the model already returned a single word, normalize it.
     first_word = text_lower.split()[0]
     if first_word in {POS_LABEL, NEG_LABEL}:
         return first_word
@@ -36,30 +33,24 @@ def extract_label(text: str) -> str:
     elif neg_index != -1:
         return NEG_LABEL
 
-    # Both appear: choose whichever appears first.
     return POS_LABEL if pos_index < neg_index else NEG_LABEL
 
 
-def incontext_learning(num_examples: int = 10) -> None:
-    """
-    Problem 1:
-    - Use the custom list of 10 short product reviews in REVIEWS.
-    - Apply zero-shot, one-shot, and few-shot prompts to the same set of reviews.
-    - Evaluate OpenAI (GPT-4.1) and Gemini models.
-    """
+def incontext_learning(num_examples: int = 10) -> None:  
     iclt = IncontextLearning_Templates()
     samples = REVIEWS[:num_examples]
 
-    openai_model = OpenAIModel()
+    # openai_model = OpenAIModel()
     gemini_model = GeminiModel()
+    anthropic_model = AnthropicModel()
 
     models = {
-        "openai_gpt4.1": openai_model,
-        "gemini_2.0_flash": gemini_model,
+        # "openai_gpt4.1": openai_model,
+        "gemini_2.5_flash": gemini_model,
+        "anthropic_haiku_4.5": anthropic_model,
     }
     strategies = ["zero", "one", "few"]
 
-    # (model, strategy) -> example_id -> prediction label
     results: Dict[Tuple[str, str], Dict[str, str]] = {}
 
     for model_name in models:
@@ -179,12 +170,13 @@ def chain_of_thought_prompting() -> None:
     templates = ChainOfThoughtTemplates()
     evaluator = Evaluator()
 
-    openai_model = OpenAIModel()
+    # openai_model = OpenAIModel()
     gemini_model = GeminiModel()
-
+    anthropic_model = AnthropicModel()
     models = {
-        "openai_gpt4.1": openai_model,
-        "gemini_flash": gemini_model,
+        # "openai_gpt4.1": openai_model,
+        "gemini_2.5_flash": gemini_model,
+        "anthropic_haiku_4.5": anthropic_model,
     }
 
     styles = ["direct", "cot"]
@@ -251,7 +243,7 @@ def chain_of_thought_prompting() -> None:
                 }
             )
 
-    # save Problem 2 results
+    #save Problem 2 results
     results_dir = Path("results")
     results_dir.mkdir(parents=True, exist_ok=True)
 
@@ -295,5 +287,5 @@ def chain_of_thought_prompting() -> None:
 if __name__ == "__main__":
     # Run Problem 1 (in-context learning) and Problem 2 (CoT) as needed.
     incontext_learning()
-    # chain_of_thought_prompting()
+    chain_of_thought_prompting()
 

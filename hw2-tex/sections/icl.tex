@@ -1,0 +1,31 @@
+In-context learning refers to the ability of large language models to perform a task from a few task descriptions and labeled examples provided in the prompt, without gradient updates or fine-tuning~\cite{brown2020language}. Brown et al.\ showed that GPT-3 achieves strong performance in zero-shot, one-shot, and few-shot settings across many NLP tasks, with few-shot performance scaling favorably with model size. We apply the same paradigm to binary sentiment classification on short, often sarcastic product reviews.
+
+\paragraph{(a) Zero-shot prompt.}
+We constructed a zero-shot prompt that directly asks the model to classify a short product review as exactly one word: \emph{Positive} or \emph{Negative}, with instructions to focus on the reviewer's true intent (including sarcasm and mixed language) rather than surface sentiment. The full template is given in Appendix~\ref{app:sentiment-prompts}.
+
+\paragraph{(b) One-shot prompt.}
+We constructed a one-shot prompt that includes one labeled example---a clearly sarcastic negative review---followed by the same task description and the query review. The single example signals that pragmatic and ironic language should be interpreted by intended meaning. The full template is in Appendix~\ref{app:sentiment-prompts}.
+
+\paragraph{(c) Few-shot prompt.}
+We constructed a few-shot prompt containing five labeled examples covering both classes (positive and negative), including deadpan negative, temporal-reversal positive, and ironic praise, so the model sees varied pragmatic cases before the query. The full template is in Appendix~\ref{app:sentiment-prompts}.
+
+\paragraph{(d) Application to 10 reviews with two models.}
+We applied all three prompts to the same set of 10 hand-crafted reviews (listed in Appendix~\ref{app:sentiment-data}) using two models: Gemini~2.5 Flash and Claude Haiku. For each review and each (model, strategy) pair we recorded the predicted label; detailed predictions are in \texttt{results/problem1\_predictions.csv}.
+
+\paragraph{(e) Accuracy and main differences.}
+Table~\ref{tab:icl-accuracy} reports accuracy for each prompting strategy. Both models reached 80\% in zero-shot; one-shot raised accuracy to 90\% for both. Few-shot kept Gemini at 90\% but lowered Claude back to 80\%, so more examples did not always help. Main differences: in-context examples helped resolve sarcastic cases (e.g., ``didn't catch fire''); for Claude, few-shot appeared to hurt, suggesting one well-chosen example can be more robust than several.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lccc}
+    \toprule
+    Model & Zero-shot & One-shot & Few-shot \\
+    \midrule
+    Gemini 2.5 Flash & 0.80 & 0.90 & 0.90 \\
+    Claude Haiku & 0.80 & 0.90 & 0.80 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Accuracy (Problem~1) by model and strategy. Source: \texttt{results/problem1\_summary.csv}.}
+  \label{tab:icl-accuracy}
+\end{table}
+

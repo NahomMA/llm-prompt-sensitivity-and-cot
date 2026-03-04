@@ -14,10 +14,7 @@ class Evaluator:
 
     def evaluate(
         self, predictions: List[str], gold_labels: List[str]
-    ) -> Tuple:
-        """
-        Return confusion matrix and standard classification metrics.
-        """
+    ) -> Tuple:        
         cm = sk_confusion_matrix(gold_labels, predictions)
         accuracy = accuracy_score(gold_labels, predictions)
         precision = precision_score(gold_labels, predictions, average="macro")

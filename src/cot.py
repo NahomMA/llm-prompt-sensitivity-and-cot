@@ -1,14 +1,6 @@
 from typing import List, Dict
 
 
-"""
-Problem 2: Chain-of-thought prompting.
-
-We choose the arithmetic word-problem domain and define 10 problems
-with known correct numeric answers (as strings).
-"""
-
-
 PROBLEMS: List[Dict[str, str]] = [
     {
         "question": "A store sells notebooks for $4 each. If you buy 3 or more, you get a 25% discount on the entire purchase. \
