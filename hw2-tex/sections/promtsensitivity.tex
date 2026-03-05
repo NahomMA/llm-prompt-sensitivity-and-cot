@@ -1,1 +1,31 @@
-Describe which strong-performing prompt from Problems 1 or 2 you chose, what controlled perturbations you applied (e.g., reordering examples, changing phrasing, adding/removing constraints), and how two models' outputs changed. Summarize robustness patterns and which perturbations mattered most.
+\paragraph{(a) Prompt chosen.}
+We chose the Problem~1 few-shot sentiment prompt as the baseline, which had good performance (e.g., 90\% accuracy for Gemini and for Claude under one-shot/few-shot). It has a clear structure: task description, five labeled examples covering both classes, and the query review.
+
+\paragraph{(b) Controlled perturbations.}
+We produced four perturbed versions in addition to the baseline: (1)~\emph{reorder}---same five examples with positive examples listed first, then negative; (2)~\emph{rephrase}---shorter instruction (``Classify the sentiment as Positive or Negative'' without ``exactly one word''); (3)~\emph{add\_constraint}---explicit ``Do not explain; output only the label''; (4)~\emph{remove\_constraint}---dropped ``exactly one word'' from the instruction. The exact text of each variant is described in Appendix~\ref{app:sensitivity}.
+
+\paragraph{(c) Running and recording.}
+We ran each prompt variant (baseline plus four perturbations) on the same set of 10 reviews from Problem~1 (Appendix~\ref{app:sentiment-data}). For each (model, variant, review) we recorded the predicted label and raw output; results are in \texttt{results/problem3\_predictions.csv}.
+
+\paragraph{(d) Robustness across two models.}
+We evaluated Gemini~2.5 Flash and Claude Haiku. For each variant we computed accuracy on the 10 reviews and compared to the baseline (Table~\ref{tab:sensitivity}). Full per-variant accuracy is in \texttt{results/problem3\_summary.csv}.
+
+\paragraph{(e) Sensitivity patterns.}
+Gemini~2.5 Flash was fully robust across all variants (0.90 accuracy in every condition). Claude Haiku was sensitive to two perturbations: rephrasing the instruction \emph{improved} accuracy from 0.80 to 0.90, while removing the ``exactly one word'' constraint \emph{reduced} it to 0.70. Reordering and adding an explicit ``do not explain'' constraint left accuracy unchanged for both models. The perturbation that mattered most was \emph{remove\_constraint}, which hurt Claude; the one that helped was \emph{rephrase}, which gave Claude a clearer instruction. See Table~\ref{tab:sensitivity}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    Variant & Gemini 2.5 Flash & Claude Haiku \\
+    \midrule
+    baseline & 0.90 & 0.80 \\
+    reorder & 0.90 & 0.80 \\
+    rephrase & 0.90 & 0.90 \\
+    add\_constraint & 0.90 & 0.80 \\
+    remove\_constraint & 0.90 & 0.70 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Accuracy (Problem~3) by model and prompt variant. Source: \texttt{results/problem3\_summary.csv}.}
+  \label{tab:sensitivity}
+\end{table}

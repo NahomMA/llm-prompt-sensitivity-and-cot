@@ -133,10 +133,14 @@ The arithmetic word problems used in Problem~2, with correct numeric answers:
 \subsection*{Appendix E: Prompt Variants for Sensitivity Analysis}
 \label{app:sensitivity}
 
-For Problem~3 (prompt sensitivity), we perturbed one of the best-performing prompts from Problems~1--2 (e.g., the few-shot sentiment prompt) by:
+For Problem~3 (prompt sensitivity), we used the Problem~1 few-shot sentiment prompt as the baseline and produced four controlled perturbations on the same five labeled examples and task description.
+
 \begin{itemize}
-  \item Reordering the in-context examples.
-  \item Rephrasing the task description (more formal vs. more conversational).
-  \item Adding or removing an explicit constraint on output format.
+  \item \textbf{Baseline.} The unmodified few-shot template from Appendix~A (order: Neg, Pos, Pos, Neg, Pos).
+  \item \textbf{Reorder.} Same five examples and wording; only the order of examples changed to positive-first (Pos, Pos, Pos, Neg, Neg).
+  \item \textbf{Rephrase.} Same example order as baseline; the task line was shortened to ``Classify the sentiment as Positive or Negative'' (removed ``exactly one word'').
+  \item \textbf{Add constraint.} Baseline plus one sentence: ``Do not explain; output only the label.''
+  \item \textbf{Remove constraint.} Baseline with ``exactly one word'' removed from the instruction (``Classify the review as Positive or Negative'').
 \end{itemize}
-The exact text of these variants follows the same structure as the base templates in Appendices~A and~B and can be reconstructed from the descriptions in the main report.
+
+The full text of each variant follows the same structure as the few-shot template in Appendix~A (task description, five examples, ``Now classify:'', then the query review and ``Label:''). Implementations are in \texttt{src/incontext\_learning.py} under \texttt{SENSITIVITY\_VARIANTS}.
