@@ -18,7 +18,7 @@ This project investigates how prompting strategies affect large language model b
 ├── main.py                      # Entry point, runs all three experiments
 ├── src/
 │   ├── incontext_learning.py    # Prompt templates and sensitivity variants
-│   ├── chain_of_thought.py      # Direct-answer and CoT templates
+│   ├── cot.py      # Direct-answer and CoT templates
 │   ├── models.py                # Gemini and Claude API wrappers
 │   └── evaluation.py            # Accuracy, precision, recall, F1 computation
 ├── results/                     # Generated CSV outputs
@@ -28,7 +28,7 @@ This project investigates how prompting strategies affect large language model b
 │   ├── problem2_summary.csv
 │   ├── problem3_predictions.csv
 │   └── problem3_summary.csv
-├── .env                         # API keys (not committed)
+├── .env                         
 ├── pyproject.toml
 └── README.md
 ```
