@@ -52,7 +52,6 @@ Thumbs.db
 *.json
 *.csv
 *.txt
-*.md
 # *.yaml
 # *.yml
 *.jsonl
