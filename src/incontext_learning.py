@@ -109,7 +109,7 @@ Label:
 """.strip()
 
 
-# ── Problem 3: Sensitivity variants (baseline = few-shot, then perturbations) ──
+# Problem 3: Sensitivity variants (baseline = few-shot, then perturbations) 
 
 # Baseline: same as FEW_SHOT_TEMPLATE (original order: Neg, Pos, Pos, Neg, Pos)
 SENSITIVITY_BASELINE = FEW_SHOT_TEMPLATE
@@ -252,7 +252,6 @@ class IncontextLearning_Templates:
         raise ValueError(f"Unknown strategy: {strategy}")
 
     def get_sensitivity_prompt(self, variant: str, review: str) -> str:
-        """Get prompt for Problem 3 sensitivity (baseline or perturbed)."""
         if variant not in SENSITIVITY_VARIANTS:
             raise ValueError(f"Unknown sensitivity variant: {variant}")
         return SENSITIVITY_VARIANTS[variant].format(review=review)
