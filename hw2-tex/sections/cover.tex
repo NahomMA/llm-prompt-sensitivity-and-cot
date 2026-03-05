@@ -6,10 +6,10 @@
     
         \textsc{\LARGE Old Dominion University}\\[1.0cm]
         \textsc{\Large CS 895: LLM Architecture \& Applications}\\[0.5cm] 
-        \HRule \\[0.3cm]
+        \HRule \\[0.1cm]
         { \huge \bfseries Prompting Strategies and Their Effect on Model Behavior}\\[0.3cm] 
         { \Large \bfseries Homework 2}\\[0.3cm] 
-        \HRule \\[1.0cm]
+        \HRule \\[0.1cm]
 
       
         \begin{minipage}{0.4\textwidth}
@@ -25,17 +25,14 @@
                 \emph{Lecturer:} \\
                 Prof. Nazzal
             \end{flushright}
-        \end{minipage}\\[1.0cm]
+        \end{minipage}\\[0.5cm]
 
-        \large
-        \emph{Date Due:} March 4, 2026 \\ 
-        \emph{Date Submitted:} \today \\[1.0cm] 
+        \emph{Date Due:} March 4, 2026, \emph{Date Submitted:} \today \\[1.0cm] 
 
     \end{center}
-
-    \vspace{0.5cm}
+   \vspace{0.2cm}
     \begin{abstract}
-        \noindent This project investigates two fundamental areas of digital image processing: geometric transformation and image enhancement. In the first task, we applied a composite affine transformation involving scaling, shearing, rotation, and translation to the reference image \texttt{lena.png} to create a distorted version. We then registered the distorted image back to the original using inverse mapping with bicubic interpolation. The registration accuracy was validated through multiple similarity metrics, achieving a Normalized Cross-Correlation of 0.965 and Normalized Mutual Information of 1.477, both indicating excellent alignment. The second task focused on enhancing the visual quality of \texttt{clown.png} using various point processing techniques. We implemented contrast stretching, histogram equalization, and gamma correction to improve image contrast and brightness. The effectiveness of each enhancement method was assessed by comparing the processed images and analyzing their intensity histograms. Results demonstrate the practical utility of these techniques for improving image quality and achieving accurate geometric registration.
+        \noindent This report investigates prompting strategies and their effect on large language model behavior across three axes.Prompts, examples, and evaluation sets were constructed with LLM assistance. The first examines in-context learning for sentiment classification on sarcastic product reviews, comparing zero-shot, one-shot, and few-shot prompting with Gemini 2.5 Flash and Claude Haiku; in-context examples improved accuracy from 0.80 to 0.90 but few-shot did not uniformly outperform one-shot across models. The second compares direct-answer and chain-of-thought prompting on twelve arithmetic word problems, finding that CoT reduced Gemini's accuracy from 0.83 to 0.75 through propagated arithmetic errors while slightly improving Claude's precision and F1 at equal accuracy. The third measures prompt sensitivity through eight controlled perturbations of the few-shot baseline, including example reordering, instruction rephrasing, constraint addition and removal, reduced example count, contradictory labels, role changes, and label-space expansion; Gemini held at 0.90 for four variants and dropped to 0.80 for the remaining four, while Claude was more volatile, falling to 0.70 on constraint removal but rising to 0.90 with fewer examples, the only configuration where a perturbation improved over its 0.80 baseline. These findings demonstrate that model behavior is highly prompt-dependent and that strong performance on a fixed prompt does not guarantee robustness, underscoring the need for systematic prompt evaluation in deployable systems.
     \end{abstract}
 
 \end{titlepage}

@@ -133,14 +133,18 @@ The arithmetic word problems used in Problem~2, with correct numeric answers:
 \subsection*{Appendix E: Prompt Variants for Sensitivity Analysis}
 \label{app:sensitivity}
 
-For Problem~3 (prompt sensitivity), we used the Problem~1 few-shot sentiment prompt as the baseline and produced four controlled perturbations on the same five labeled examples and task description.
+For Problem~3 (prompt sensitivity), we used the Problem~1 few-shot sentiment prompt as the baseline and produced eight controlled perturbations.
 
 \begin{itemize}
-  \item \textbf{Baseline.} The unmodified few-shot template from Appendix~A (order: Neg, Pos, Pos, Neg, Pos).
-  \item \textbf{Reorder.} Same five examples and wording; only the order of examples changed to positive-first (Pos, Pos, Pos, Neg, Neg).
-  \item \textbf{Rephrase.} Same example order as baseline; the task line was shortened to ``Classify the sentiment as Positive or Negative'' (removed ``exactly one word'').
-  \item \textbf{Add constraint.} Baseline plus one sentence: ``Do not explain; output only the label.''
-  \item \textbf{Remove constraint.} Baseline with ``exactly one word'' removed from the instruction (``Classify the review as Positive or Negative'').
+  \item \textbf{Baseline.} Unmodified few-shot template from Appendix~A (five examples, order: Neg, Pos, Pos, Neg, Pos).
+  \item \textbf{Reorder.} Same five examples; order changed to positive-first (Pos, Pos, Pos, Neg, Neg).
+  \item \textbf{Rephrase.} Shorter instruction: ``Classify the sentiment as Positive or Negative'' (no ``exactly one word'').
+  \item \textbf{Add constraint.} Baseline plus ``Do not explain; output only the label.''
+  \item \textbf{Remove constraint.} Instruction changed to ``Classify the review as Positive or Negative'' (no ``exactly one word'').
+  \item \textbf{Fewer examples.} Same task and wording; only three in-context examples instead of five.
+  \item \textbf{Contradictory.} One of the five examples is deliberately mislabeled to test robustness to noisy demonstrations.
+  \item \textbf{Role change.} System role changed (e.g., ``You are a product analyst'') instead of ``sentiment classifier.''
+  \item \textbf{Add neutral.} Instruction allows output ``Positive,'' ``Negative,'' or ``Neutral''; gold labels remain binary.
 \end{itemize}
 
-The full text of each variant follows the same structure as the few-shot template in Appendix~A (task description, five examples, ``Now classify:'', then the query review and ``Label:''). Implementations are in \texttt{src/incontext\_learning.py} under \texttt{SENSITIVITY\_VARIANTS}.
+Implementations are in \texttt{src/incontext\_learning.py} under \texttt{SENSITIVITY\_VARIANTS}.

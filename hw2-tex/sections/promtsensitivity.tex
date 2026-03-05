@@ -1,17 +1,21 @@
 \paragraph{(a) Prompt chosen.}
-We chose the Problem~1 few-shot sentiment prompt as the baseline, which had good performance (e.g., 90\% accuracy for Gemini and for Claude under one-shot/few-shot). It has a clear structure: task description, five labeled examples covering both classes, and the query review.
+We chose the Problem~1 few-shot sentiment prompt as the baseline since it had strong performance and a clear structure for controlled perturbations. It uses five labeled examples with binary Positive/Negative classification on the same 10 reviews.
 
 \paragraph{(b) Controlled perturbations.}
-We produced four perturbed versions in addition to the baseline: (1)~\emph{reorder}---same five examples with positive examples listed first, then negative; (2)~\emph{rephrase}---shorter instruction (``Classify the sentiment as Positive or Negative'' without ``exactly one word''); (3)~\emph{add\_constraint}---explicit ``Do not explain; output only the label''; (4)~\emph{remove\_constraint}---dropped ``exactly one word'' from the instruction. The exact text of each variant is described in Appendix~\ref{app:sensitivity}.
+We produced eight perturbed versions: (1) {reorder}, positive examples first then negative; (2) {rephrase}, (3) {add constraint}, appending 
+``Do not explain; output only the label''; (4) {remove constraint}, dropping exactly one word; (5) {fewer examples}, three examples instead of five;
+ (6) {contradictory}, one example deliberately mislabeled; (7) {role change}, system role set to 
+ product analyst instead of sentiment classifier; (8) {add neutral}, allowing a third Neutral label while gold remains binary.
+  All variants are in Appendix~\ref{app:sensitivity}.
 
 \paragraph{(c) Running and recording.}
-We ran each prompt variant (baseline plus four perturbations) on the same set of 10 reviews from Problem~1 (Appendix~\ref{app:sentiment-data}). For each (model, variant, review) we recorded the predicted label and raw output; results are in \texttt{results/problem3\_predictions.csv}.
+We ran each variant on the same 10 reviews (Appendix~\ref{app:sentiment-data}) with both models and recorded the predicted label for every combination.
 
-\paragraph{(d) Robustness across two models.}
-We evaluated Gemini~2.5 Flash and Claude Haiku. For each variant we computed accuracy on the 10 reviews and compared to the baseline (Table~\ref{tab:sensitivity}). Full per-variant accuracy is in \texttt{results/problem3\_summary.csv}.
+\paragraph{(d) Robustness across models.}
+Table~\ref{tab:sensitivity} reports per-variant accuracy for Gemini~2.5 Flash and Claude Haiku.
 
 \paragraph{(e) Sensitivity patterns.}
-Gemini~2.5 Flash was fully robust across all variants (0.90 accuracy in every condition). Claude Haiku was sensitive to two perturbations: rephrasing the instruction \emph{improved} accuracy from 0.80 to 0.90, while removing the ``exactly one word'' constraint \emph{reduced} it to 0.70. Reordering and adding an explicit ``do not explain'' constraint left accuracy unchanged for both models. The perturbation that mattered most was \emph{remove\_constraint}, which hurt Claude; the one that helped was \emph{rephrase}, which gave Claude a clearer instruction. See Table~\ref{tab:sensitivity}.
+Gemini was more robust overall, holding at 0.90 for four variants and dropping to 0.80 for the remaining four. Claude was more volatile: removing the output constraint dropped it to 0.70, the lowest score across all conditions, while fewer examples raised it to 0.90, the only case where a perturbation improved over its baseline. The perturbations that caused the largest swings were constraint removal, which hurt both models, and label-space expansion (add neutral) and contradictory labels, which hurt Gemini but left Claude unchanged. Reordering examples had no effect on either model.
 
 \begin{table}[h]
   \centering
@@ -21,11 +25,15 @@ Gemini~2.5 Flash was fully robust across all variants (0.90 accuracy in every co
     \midrule
     baseline & 0.90 & 0.80 \\
     reorder & 0.90 & 0.80 \\
-    rephrase & 0.90 & 0.90 \\
-    add\_constraint & 0.90 & 0.80 \\
-    remove\_constraint & 0.90 & 0.70 \\
+    rephrase & 0.80 & 0.80 \\
+    add constraint & 0.90 & 0.80 \\
+    remove constraint & 0.80 & 0.70 \\
+    fewer examples & 0.90 & 0.90 \\
+    contradictory & 0.80 & 0.80 \\
+    role change & 0.80 & 0.80 \\
+    add neutral & 0.80 & 0.80 \\
     \bottomrule
   \end{tabular}
-  \caption{Accuracy (Problem~3) by model and prompt variant. Source: \texttt{results/problem3\_summary.csv}.}
+  \caption{Accuracy (Problem~3) by model and prompt variant.}
   \label{tab:sensitivity}
 \end{table}

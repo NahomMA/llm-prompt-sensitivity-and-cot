@@ -1,11 +1,27 @@
 \paragraph{(a) Strategies planned.}
-I plan to use Chain-of-Thought (CoT) prompting~\cite{wei2022chain} and ReAct~\cite{yao2022react} in my project on certifiable agentic systems via dynamic conformal verification of reasoning traces using graph neural networks. CoT will supply structured reasoning traces; ReAct will define the agent design that interleaves reasoning with tool-calling actions.
+I plan to use Chain-of-Thought (CoT) prompting~\cite{wei2022chain} and ReAct~\cite{yao2022react} 
+in my project on certifiable agentic systems via dynamic conformal verification of reasoning 
+traces using graph neural networks. CoT will supply structured reasoning traces; ReAct will 
+define the agent design that interleaves reasoning with tool-calling actions.
 
 \paragraph{(b) Usefulness for the project.}
-CoT is essential because the project requires explicit intermediate reasoning steps that can be extracted, parsed, and turned into graph structures for the GNN verification pipeline; without CoT, outputs are opaque and not verifiable. ReAct grounds these traces in tool use, producing Thought--Action--Observation sequences that map naturally to directed graphs (nodes = reasoning states, edges = transitions). Together they provide both the trace structure needed for graph construction and the agentic behavior needed for task execution.
+CoT is essential as the project requires the intermediate reasoning 
+steps that can be extracted, parsed, and turned into graph structures for the 
+GNN verification pipeline. 
+ReAct grounds these traces in tool use, producing Thought--Action--Observation sequences 
+that map naturally to directed graphs (nodes = reasoning states, edges = transitions).
+
 
 \paragraph{(c) Expected challenges.}
-CoT trace quality is variable: models can confabulate or skip steps, which injects noise into the graphs and can degrade GNN verification. For ReAct, controlling trace length and consistency across tasks is difficult; longer loops yield larger graphs that may exceed the GNN's capacity, and aligning reasoning granularity with meaningful graph nodes requires careful prompt design.
+CoT trace quality is variable: models might skip steps,
+ which injects noise into the graphs and can degrade GNN verification. For ReAct,
+  controlling trace length and consistency across tasks is difficult.
+   
 
 \paragraph{(d) Strategies not planned.}
-I do not plan to use in-context learning with few-shot exemplars. The project needs novel reasoning traces that reflect the model's actual decision process; few-shot examples risk the model copying surface structure rather than producing authentic chains. Since the GNN must certify real reasoning behavior, templated traces from demonstrations would undermine verification validity.
+I do not plan to use in-context learning with few-shot exemplars.
+The project needs reasoning traces that reflect the model's 
+actual decision process. Few-shot examples risk 
+the model copying surface structure rather than producing authentic chains.
+Since the GNN must certify real reasoning behavior, templated traces from demonstrations 
+would undermine verification validity.

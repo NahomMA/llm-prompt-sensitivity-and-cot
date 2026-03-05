@@ -1,19 +1,19 @@
-Chain-of-thought (CoT) prompting asks the model to produce intermediate reasoning steps before the final answer, which can substantially improve performance on arithmetic, commonsense, and symbolic reasoning tasks~\cite{wei2022chain}. Wei et al.\ showed that providing a few CoT exemplars in the prompt elicits step-by-step reasoning in sufficiently large models and can surpass direct-answer baselines (and even some finetuned models) on benchmarks such as GSM8K. We compare direct-answer and CoT prompting on a small set of arithmetic word problems using two contemporary models.
+Chain-of-thought (CoT) prompting asks the model to produce intermediate reasoning steps before the final answer, which can substantially improve performance on arithmetic, commonsense, and symbolic reasoning tasks~\cite{wei2022chain}. Wei et al.\ showed that providing a few CoT exemplars in the prompt elicits step-by-step reasoning in sufficiently large models and can surpass direct-answer baselines on benchmarks such as GSM8K. We compare direct-answer and CoT prompting on a small set of arithmetic word problems using two contemporary models.
 
 \paragraph{(a) Domain and problems.}
-We chose the domain of arithmetic and short word problems and constructed 12 problems with known correct numeric answers (e.g., multi-step arithmetic, discounts, rates, geometry). The full list with answers is in Appendix~\ref{app:cot-data}.
+We chose arithmetic and short word problems and constructed 12 problems with known correct numeric answers covering multi-step arithmetic, discounts, rates, and geometry. The full list with answers is in Appendix~\ref{app:cot-data}.
 
 \paragraph{(b) Direct-answer prompt.}
-We wrote a prompt template that asks the model to read the problem and give only the final numeric answer, with no intermediate reasoning. We applied it to all problems and saved the outputs; the template is in Appendix~\ref{app:cot-prompts} and outputs in \texttt{results/problem2\_predictions.csv}.
+We wrote a prompt that asks the model to read the problem and give only the final numeric answer with no intermediate reasoning. The template is in Appendix~\ref{app:cot-prompts}.
 
 \paragraph{(c) Chain-of-thought prompt.}
-We wrote a second template that asks the model to show intermediate reasoning steps and then give the final numeric answer on the last line. We applied it to all problems and saved the outputs; the template is in Appendix~\ref{app:cot-prompts}.
+We wrote a second template that asks the model to show intermediate reasoning steps and then give the final numeric answer on the last line. The template is in Appendix~\ref{app:cot-prompts}.
 
 \paragraph{(d) Evaluation of two models.}
-We evaluated Gemini~2.5 Flash and Claude Haiku. For each model we (i) ran the direct-answer prompt on all problems and recorded correctness; (ii) ran the chain-of-thought prompt and recorded correctness; (iii) computed and report accuracy (and macro precision, recall, F1) for each prompting style in Table~\ref{tab:cot-accuracy}, with full metrics in \texttt{results/problem2\_summary.csv}.
+We ran both prompts on all 12 problems with Gemini~2.5 Flash and Claude Haiku, recording correctness for each. Table~\ref{tab:cot-accuracy} reports accuracy along with macro precision, recall, and F1 for each model and prompting style.
 
 \paragraph{(e) Comparison of prompting styles.}
-For Gemini, direct-answer performed better (0.83 accuracy) than chain-of-thought (0.75); CoT sometimes introduced arithmetic slips that propagated to the final answer. For Claude, both styles gave 0.75 accuracy, but CoT slightly improved macro precision and F1. So chain-of-thought did not improve raw accuracy here and for one model hurt it; it can still improve the structure of errors (fewer confusions) without changing the score.
+For Gemini, direct-answer performed better (0.83) than CoT (0.75); CoT introduced arithmetic slips that propagated to the final answer. For Claude, both styles gave 0.75 accuracy, but CoT slightly improved macro precision and F1 as shown in Table~\ref{tab:cot-accuracy}. Chain-of-thought did not improve raw accuracy for either model and hurt one, though it can still improve the structure of errors without changing the overall score.
 
 \begin{table}[h]
   \centering
@@ -27,7 +27,6 @@ For Gemini, direct-answer performed better (0.83 accuracy) than chain-of-thought
     Claude Haiku     & CoT    & 0.75 & 0.58 & 0.56 & 0.57 \\
     \bottomrule
   \end{tabular}
-  \caption{Direct vs.\ CoT (Problem~2). Source: \texttt{results/problem2\_summary.csv}.}
+  \caption{Direct-answer vs.\ chain-of-thought prompting (Problem~2).}
   \label{tab:cot-accuracy}
 \end{table}
-
